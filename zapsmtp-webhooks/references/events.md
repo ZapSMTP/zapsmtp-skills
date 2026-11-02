@@ -134,3 +134,26 @@ Details and examples: `zapsmtp-inbound`.
 | `email.replied` | `replied` | | After delivery |
 
 After `delivered` a late `bounced` can still arrive (an out-of-band bounce email).
+
+## More events (2026-11)
+
+| Type | When | `data` |
+|---|---|---|
+| `email.opened_unique` | The first open of an email by its recipient | As `email.opened`; sent once. Not in the default list: choose it |
+| `email.clicked_unique` | The first click in an email by its recipient (any link) | As `email.clicked`; sent once. Not in the default list |
+| `email.unsubscribed` | A recipient unsubscribed (link or one-click); now suppressed | `email_id`, `to`, `tags`, `metadata`, `stream` |
+| `email.forward_failed` | A received email could not be forwarded | `email_id` (received), `to`, `forward_id`, `reason` (`destination`, `gone`, `loop`, `seal`, `retries`), `error` |
+| `domain.verified` | A sending domain passed verification the first time | `domain_id`, `domain`, `dkim_verified`, `spf_verified`, `dmarc_verified` |
+| `domain.reputation_changed` | A sending domain was listed on / removed from a blocklist | `domain_id`, `domain`, `list`, `listed`, `severity`, `removal_url` |
+| `email.scheduled` | An email was scheduled (or moved) for later, per recipient | `email_id`, `from`, `to`, `subject`, `tags`, `metadata`, `stream`, `scheduled_at` |
+| `suppression.added` | An address went on the suppression list | `email`, `reason` (`hard_bounce`, `complaint`, `unsubscribe`, `manual`), `source_id` |
+| `suppression.removed` | An address came off the suppression list | `email` |
+| `domain.created` / `domain.deleted` | A sending domain was added / removed | `domain_id`, `domain` |
+
+`email.complained` carries `complaint`: `type` (the ARF feedback type, `abuse` …) and `source`
+(the mailbox provider's feedback loop that reported it).
+
+`filter.domains` narrows an endpoint to some domains: the From domain of sent mail, the
+receiving domain of received mail, the domain of `domain.*` events. `PATCH` keeps a filter list
+it does not name. An endpoint disabled automatically (5 events out of retries in 24 h) is
+reported by email to the account's owners and admins.

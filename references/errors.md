@@ -12,6 +12,7 @@ Every error body: `{"statusCode", "name", "message", "error": {"code", "message"
 | `restricted_api_key` | 403 | The key has sending access only, or is limited to another domain or stream. | No |
 | `domain_not_verified` | 403 | A live key sends from a domain not verified in the account (exact name: a subdomain is a separate domain). | No |
 | `account_suspended` | 403 | The account is suspended. | No |
+| `account_closing` | 403 | The account is scheduled for deletion; an owner can cancel it in Settings. | No |
 | `plan_limit_reached` | 403 | The plan's limit for domains or SMTP credentials is reached. | No |
 | `test_key_restricted` | 403 | A `zap_test_` key tried to change the account. Test keys may send test email, render templates and read. | No |
 | `key_restricted` | 403 | A restricted key creating or changing keys tried to give them more than it has (a later expiry, another stream). | No |

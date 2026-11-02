@@ -92,7 +92,7 @@ Batch errors: `400 validation_error` (invalid JSON, bad `x-batch-validation`),
 | Code | HTTP |
 |---|---|
 | `validation_error` (invalid JSON / unknown field), `invalid_idempotency_key` | 400 |
-| `domain_not_verified`, `restricted_api_key`, `account_suspended` | 403 |
+| `domain_not_verified`, `restricted_api_key`, `account_suspended`, `account_closing` | 403 |
 | `idempotency_key_reused`, `idempotency_request_in_progress` | 409 |
 | `payload_too_large` (over 40 MB) | 413 |
 | `misdirected_cell` | 421 |
