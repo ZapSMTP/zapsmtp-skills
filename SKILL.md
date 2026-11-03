@@ -70,7 +70,7 @@ export ZAP_BASE_URL=https://api.zapsmtp.com/v1   # the default; another environm
 | `zap_…` (live) | Delivers email. The From domain must be verified in the account (`403 domain_not_verified`). |
 | `zap_test_…` (test) | Full validation, email log, events and webhooks, but **nothing is delivered** and the monthly quota is not charged (the per-second limit still applies). Any From domain. Events carry `test: true`; list with `GET /emails?mode=test`. Test keys may send, read and render templates; anything that changes the account (domains, webhooks, templates, suppressions, keys, inbound setup) returns `403 test_key_restricted`. |
 | `full_access` | Every endpoint. |
-| `sending_access` | Only `POST /emails`, `/emails/batch`, `/emails/spam-check`, rescheduling and canceling. Can be limited to one domain and one stream (`403 restricted_api_key` otherwise). |
+| `sending_access` | Only `POST /emails`, `/emails/batch`, `/emails/spam-check`, `/email-validations` (and `/batch`), rescheduling and canceling. Can be limited to one domain and one stream (`403 restricted_api_key` otherwise). |
 
 Rules for agents:
 
@@ -248,6 +248,7 @@ The per-second limit counts recipients across all your requests: pace bursts wit
 | Request size | 40 MB, attachments included |
 | Free plan | 3,000 emails a month, at most 100 a day |
 | Spam checks | 30 a minute per account |
+| Email validations | 120 requests a minute, up to 100 addresses each; monthly by plan |
 
 ## Resources
 

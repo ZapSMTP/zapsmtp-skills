@@ -1,6 +1,6 @@
 ---
 name: zapsmtp-email-best-practices
-description: Use when setting up or troubleshooting ZapSMTP deliverability — adding and verifying a sending domain (DKIM, SPF, DMARC records, alignment, BIMI), Gmail/Yahoo/Microsoft sender requirements, separating transactional and broadcast streams, one-click unsubscribe (List-Unsubscribe, RFC 8058), suppressions (what adds them, importing, transactional vs broadcast), warm-up of domains and dedicated IPs, testing with test keys, simulator addresses and spam checks, monitoring (metrics, bounce and complaint rates, DMARC reports, blocklists), consent and list hygiene, or when mail bounces or lands in spam.
+description: Use when setting up or troubleshooting ZapSMTP deliverability — adding and verifying a sending domain (DKIM, SPF, DMARC records, alignment, BIMI), Gmail/Yahoo/Microsoft sender requirements, separating transactional and broadcast streams, one-click unsubscribe (List-Unsubscribe, RFC 8058), suppressions (what adds them, importing, transactional vs broadcast), warm-up of domains and dedicated IPs, testing with test keys, simulator addresses, spam checks, address validation and inbox placement tests, monitoring (metrics, bounce and complaint rates, DMARC reports, blocklists), consent and list hygiene, or when mail bounces or lands in spam.
 license: MIT
 metadata:
   author: zapsmtp
@@ -159,6 +159,20 @@ check = client.emails.spam_check(
 )
 print(check.verdict, check.score, [i.kind for i in check.issues or []])
 ```
+
+- Validate addresses before they enter a list: `POST /email-validations` (`email`) or
+  `/email-validations/batch` (`emails`, up to 100; test keys may). Nothing is sent. `result`:
+  `deliverable`, `risky`, `undeliverable`, `unknown`; `reason` the most serious of
+  `invalid_syntax`, `reserved_domain`, `domain_not_found`, `no_mail_server`, `mailbox_not_found`,
+  `previously_bounced`, `dns_error`, `suppressed`, `disposable`, `accept_all`, `role_address`;
+  `did_you_mean` fixes typos (`gmial.com`). Drop `undeliverable`, ask the person to confirm
+  `risky`. Monthly allowance by plan (Free 100, Pro 5,000, Scale 25,000).
+- Inbox placement: `POST /placement-tests` with a message (`from`, `subject`, `html`/`text` or
+  `template`; a live key) sends a copy to seed mailboxes at Gmail, Outlook, Yahoo and others;
+  without one it returns the seed addresses and a `token` to send yourself. Poll
+  `GET /placement-tests/{id}` until `status` is `done`: each result is `inbox`, a Gmail tab
+  (`promotions`, `social`, `updates`, `forums`), `spam` or `missing`, with the provider's SPF,
+  DKIM and DMARC verdict; `summary.inbox_rate`. Free 1 test a month, Pro 10, Scale 50.
 
 ## 7. Content
 
